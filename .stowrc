@@ -1,0 +1,10 @@
+
+# skip macOS metadata files
+ignore = /.DS_Store$
+
+# also skip any .gitignore files inside packages
+ignore = /.gitignore$
+ignore = /.git
+ignore = /.gitmodules
+
+

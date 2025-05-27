@@ -1,0 +1,30 @@
+[user]
+	email = haikarainen.valtteri@gmail.com
+	name = Valtteri Haikarainen
+[init]
+	defaultBranch = main
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+
+[core]
+    editor = nvim
+    pager = less -FRX
+    excludesfile = ~/.gitignore_global
+
+[color] 
+    ui = auto 
+
+[pull] 
+    # Default to rebasing instead of merging
+    rebase = true
+
+[push] 
+    # Only push the current branch, and error if it does not match upstream
+    default = simple
+
+
+
+
