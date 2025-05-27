@@ -77,5 +77,3 @@ Each top-level folder corresponds to a Stow package. Files within mirror the pat
    cd ~/dotfiles
    bash bootstrap.sh
    ```
-
-That will install any missing tools into `
