@@ -1,6 +1,9 @@
 
 
-# Luke's config for the Zoomer Shell
+# Source termux specific aliases
+if [[ -n "$TERMUX_VERSION" ]]; then
+    source ~/.config/.zshrc.termux_aliases
+fi
 
 # Enable colors and change prompt:
 autoload -U colors && colors
