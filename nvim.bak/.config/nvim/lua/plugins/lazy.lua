@@ -45,7 +45,7 @@ require('lazy').setup({
      opts = {
       log_level     = "error",
       suppressed_dirs = { "~/", "~/Downloads" },
-  },
+      },
   },
 
   -- Visualize buffers as tabs

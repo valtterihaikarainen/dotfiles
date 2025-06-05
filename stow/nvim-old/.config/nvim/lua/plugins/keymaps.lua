@@ -16,5 +16,3 @@ vim.keymap.set("n", "<leader>mp", ":MarkdownPreviewToggle<cr>")
 -- nvim-comment
 vim.keymap.set({"n", "v"}, "<leader>/", ":CommentToggle<cr>")
 
--- black python formatting 
-vim.keymap.set("n", "<leader>fmp", ":silent !black %<cr>")
