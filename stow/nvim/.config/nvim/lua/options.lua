@@ -27,3 +27,4 @@ vim.opt.sidescrolloff = 8 -- minimum number of lines to keep above and below the
 
 -- SET CLIPBOARD AS DEFAULT REGISTER
 vim.opt.clipboard = "unnamedplus"
+

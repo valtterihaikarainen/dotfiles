@@ -18,6 +18,7 @@ vim.opt.rtp:prepend(lazypath) -- Prepend lazy to runtime path
 local telescope = require("plugins.telescope")
 local ui_plugins = require("plugins.ui")
 local lsp = require("plugins.lsp")
+local jupyter = require("plugins.jupyter")
 
 -- 3) Concatenate them all into one big list 
 local plugin_list = {}
@@ -32,6 +33,7 @@ end
 extend(plugin_list, ui_plugins)
 extend(plugin_list, telescope)
 extend(plugin_list, lsp)
+extend(plugin_list, jupyter)
 
 -- ... more
 
