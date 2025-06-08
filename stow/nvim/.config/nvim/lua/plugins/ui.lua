@@ -13,5 +13,13 @@ return {
         lazy = false,
         version = "*",
         dependencies = 'nvim-tree/nvim-web-devicons'
-    } 
+    },
+    {
+        "kylechui/nvim-surround",
+        version = "*", -- for stability
+        event = "VeryLazy",
+        config = function()
+            require("nvim-surround").setup({})
+        end
+    }
 }

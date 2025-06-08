@@ -1,105 +1,159 @@
+#!/bin/zsh
+#
+# ~/.zshrc: Main configuration file for the Zsh shell.
+#
+
+# -----------------------------------------------------------------------------
+# SECTION 1: ENVIRONMENT & PATH
+#
+# Set up the shell environment, locale, and command search path.
+# -----------------------------------------------------------------------------
+
+# Set the default language and ensure all locale settings use UTF-8.
 export LANG=en_US.UTF-8
-export LC_ALL=en_US.UTF-8 # Add or ensure this line is present
+export LC_ALL=en_US.UTF-8
 
-# Source local Zsh configuration if it exists
-
-if [ -f ~/.zshrc.local ]; then
-    . ~/.zshrc.local
+# On macOS, prefer GNU core utilities (like ls, grep) installed via Homebrew.
+if command -v brew &> /dev/null; then
+    export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
 fi
 
-# Source termux specific aliases
-if [[ -n "$TERMUX_VERSION" ]]; then
-    source ~/.config/.zshrc.termux_aliases
-fi
+export EDITOR='vim'
+export KEYTIMEOUT=1
 
-# Enable colors and change prompt:
-autoload -U colors && colors
-PS1="%B%{$fg[red]%}[%{$fg[yellow]%}%n%{$fg[green]%}@%{$fg[blue]%}%M %{$fg[magenta]%}%~%{$fg[red]%}]%{$reset_color%}$%b "
+# -----------------------------------------------------------------------------
+# SECTION 2: HISTORY
+#
+# Configure command history settings.
+# -----------------------------------------------------------------------------
 
-# History in cache directory:
 HISTSIZE=10000
 SAVEHIST=10000
+mkdir -p ~/.cache/zsh
 HISTFILE=~/.cache/zsh/history
 
-# Basic auto/tab complete:
+# -----------------------------------------------------------------------------
+# SECTION 3: COMPLETION SYSTEM
+#
+# Initialize and configure Zsh's tab-completion system.
+# -----------------------------------------------------------------------------
+
 autoload -U compinit
 zstyle ':completion:*' menu select
 zmodload zsh/complist
 compinit
-_comp_options+=(globdots)		# Include hidden files.
 
-# vi mode
+# Include hidden files (dotfiles) in completion results.
+_comp_options+=(globdots)
+
+# For the custom 'ls' alias, hide standard macOS folders from tab-completion.
+zstyle ':completion:*' ignored-patterns \
+    'Applications' 'Desktop' 'Documents' \
+    'Library' 'Movies' 'Music' 'Pictures' 'Downloads'
+
+# -----------------------------------------------------------------------------
+# SECTION 4: KEYBINDINGS & ZSH LINE EDITOR (ZLE)
+#
+# Configure the command-line editing experience, including Vi mode and custom keys.
+# -----------------------------------------------------------------------------
+
+# --- Enable Vi Mode ---
 bindkey -v
-export KEYTIMEOUT=1
 
-# Use vim keys in tab complete menu:
+# --- Vi Keys for Completion Menu ---
 bindkey -M menuselect 'h' vi-backward-char
 bindkey -M menuselect 'k' vi-up-line-or-history
 bindkey -M menuselect 'l' vi-forward-char
 bindkey -M menuselect 'j' vi-down-line-or-history
-bindkey -v '^?' backward-delete-char
 
-# Change cursor shape for different vi modes.
+# --- Standard Keybindings ---
+bindkey '^e' edit-command-line     # Edit the current command in $EDITOR (Ctrl+e).
+
+# --- Edit Command in Vim (Ctrl+e) ---
+autoload -U edit-command-line
+zle -N edit-command-line
+
+# --- Dynamic Cursor Shape for Vi Mode ---
+# Changes cursor to a block in normal mode and a beam in insert mode.
 function zle-keymap-select {
-  if [[ ${KEYMAP} == vicmd ]] ||
-     [[ $1 = 'block' ]]; then
-    echo -ne '\e[1 q'
-  elif [[ ${KEYMAP} == main ]] ||
-       [[ ${KEYMAP} == viins ]] ||
-       [[ ${KEYMAP} = '' ]] ||
-       [[ $1 = 'beam' ]]; then
-    echo -ne '\e[5 q'
+  if [[ ${KEYMAP} == vicmd ]] || [[ $1 = 'block' ]]; then
+    echo -ne '\e[1 q' # Block cursor
+  elif [[ ${KEYMAP} == main ]] || [[ ${KEYMAP} == viins ]] || [[ ${KEYMAP} = '' ]] || [[ $1 = 'beam' ]]; then
+    echo -ne '\e[5 q' # Beam cursor
   fi
 }
 zle -N zle-keymap-select
 zle-line-init() {
-    zle -K viins # initiate `vi insert` as keymap (can be removed if `bindkey -V` has been set elsewhere)
-    echo -ne "\e[5 q"
+  zle -K viins # Start in vi insert mode.
+  echo -ne "\e[5 q" # Set beam cursor on startup.
 }
 zle -N zle-line-init
-echo -ne '\e[5 q' # Use beam shape cursor on startup.
-preexec() { echo -ne '\e[5 q' ;} # Use beam shape cursor for each new prompt.
-
-# Use lf to switch directories and bind it to ctrl-o
-lfcd () {
-    tmp="$(mktemp)"
-    lf -last-dir-path="$tmp" "$@"
-    if [ -f "$tmp" ]; then
-        dir="$(cat "$tmp")"
-        rm -f "$tmp"
-        [ -d "$dir" ] && [ "$dir" != "$(pwd)" ] && cd "$dir"
-    fi
+preexec() {
+  echo -ne '\e[5 q' # Set beam cursor for each new prompt.
 }
-bindkey -s '^o' 'lfcd\n'
 
-# Edit line in vim with ctrl-e:
-autoload edit-command-line; zle -N edit-command-line
-bindkey '^e' edit-command-line
+# Set initial cursor shape on shell startup
+echo -ne '\e[5 q'
 
-# Load aliases and shortcuts if existent.
-[ -f "$HOME/.config/shortcutrc" ] && source "$HOME/.config/shortcutrc"
-[ -f "$HOME/.config/aliasrc" ] && source "$HOME/.config/aliasrc"
+# -----------------------------------------------------------------------------
+# SECTION 5: ALIASES & CUSTOM FUNCTIONS
+#
+# Define custom shortcuts and helper functions.
+# -----------------------------------------------------------------------------
 
-alias todo='cd /Users/valtterihaikarainen/Todo; cat todo'
+# --- Aliases ---
 
-alias ls='ls --group-directories-first \
-  --hide=Library --hide=Movies --hide=Music \
-  --hide=Pictures --hide=Downloads'
+# Use GNU 'ls' with custom flags to group directories first and hide stock macOS folders.
+alias ls='ls --group-directories-first --color=auto \
+    --hide=Applications --hide=Desktop --hide=Documents \
+    --hide=Library --hide=Movies --hide=Music \
+    --hide=Pictures --hide=Downloads'
 
-# ——— Use GNU ls and hide Apple’s stock folders ———
-# Make sure coreutils gnubin is in your PATH
-export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
+alias v='nvim'
 
-# Hide these names from `ls`
-alias ls='ls --group-directories-first \
-  --hide=Applications --hide=Desktop --hide=Documents \
-  --hide=Library --hide=Movies --hide=Music \
-  --hide=Pictures --hide=Downloads'
+# -----------------------------------------------------------------------------
+# SECTION 6: PROMPT
+#
+# Configure the appearance of the shell prompt (PS1).
+# -----------------------------------------------------------------------------
 
-# Also skip them in tab-completion
-zstyle ':completion:*' ignored-patterns \
-  'Applications' 'Desktop' 'Documents' \
-  'Library' 'Movies' 'Music' 'Pictures' 'Downloads'
+autoload -U colors && colors
+# [user@hostname current_directory]$
+PS1="%B%{$fg[red]%}[%{$fg[yellow]%}%n%{$fg[green]%}@%{$fg[blue]%}%M %{$fg[magenta]%}%~%{$fg[red]%}]%{$reset_color%}$%b "
 
-# Load zsh-syntax-highlighting; should be last.
-source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# -----------------------------------------------------------------------------
+# SECTION 7: SOURCING PERSONAL & PLATFORM-SPECIFIC CONFIGS
+#
+# -----------------------------------------------------------------------------
+
+# Source local Zsh configuration if it exists
+if [[ -f "$HOME/.zshrc.local" ]]; then
+    source "$HOME/.zshrc.local"
+fi
+
+# Source custom aliases and shortcuts if they exist
+if [[ -f "$HOME/.config/aliasrc" ]]; then
+    source "$HOME/.config/aliasrc"
+fi
+if [[ -f "$HOME/.config/shortcutrc" ]]; then
+    source "$HOME/.config/shortcutrc"
+fi
+
+# Source termux specific aliases if running in Termux on Android
+if [[ -n "$TERMUX_VERSION" ]]; then
+    source "$HOME/.config/.zshrc.termux_aliases"
+fi
+
+
+# -----------------------------------------------------------------------------
+# SECTION 8: PLUGINS
+#
+# Load Zsh plugins.
+# IMPORTANT: This section should be the very last part of the file.
+# -----------------------------------------------------------------------------
+
+# Load zsh-syntax-highlighting. It provides real-time highlighting for commands.
+if [ -f /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
+  source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi

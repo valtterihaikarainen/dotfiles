@@ -32,6 +32,7 @@ end
 extend(plugin_list, ui_plugins)
 extend(plugin_list, telescope)
 extend(plugin_list, lsp)
+
 -- ... more
 
 -- 4) Finally, call lazy.nvim's setup
