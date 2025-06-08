@@ -1,6 +1,11 @@
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8 # Add or ensure this line is present
 
+# Source local Zsh configuration if it exists
+
+if [ -f ~/.zshrc.local ]; then
+    . ~/.zshrc.local
+fi
 
 # Source termux specific aliases
 if [[ -n "$TERMUX_VERSION" ]]; then
