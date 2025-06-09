@@ -67,11 +67,25 @@ return {
                 'pyright',
                 'clangd',
                 'bashls',
+                'lua_ls',
             },
             handlers = {
                 lsp_zero.default_setup,
                 lua_ls = function()
                     local lua_opts = lsp_zero.nvim_lua_ls()
+
+                    lua_opts.settings = {
+                        Lua = {
+                            diagnostics = {
+                                globals = { "vim" }, 
+                            }, 
+                            workspace = {
+                                checkThirdParty = false, 
+                                library = vim.api.nvim_get_runtime_file("", true), 
+                            }
+                        }
+                    }
+
                     require('lspconfig').lua_ls.setup(lua_opts)
                 end,
             }

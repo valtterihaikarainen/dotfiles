@@ -111,6 +111,9 @@ alias ls='ls --group-directories-first --color=auto \
 
 alias v='nvim'
 
+alias cdvrc='cd ~/.config/nvim'
+alias cdzsh='v ~/.zshrc'
+
 # -----------------------------------------------------------------------------
 # SECTION 6: PROMPT
 #
