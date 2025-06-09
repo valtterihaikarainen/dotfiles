@@ -145,7 +145,7 @@ fi
 
 # Source termux specific aliases if running in Termux on Android
 if [[ -n "$TERMUX_VERSION" ]]; then
-    source "$HOME/.config/.zshrc.termux_aliases"
+    alias copy="termux-clipboard-set"
 fi
 
 # -----------------------------------------------------------------------------
