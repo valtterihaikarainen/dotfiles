@@ -12,3 +12,6 @@ vim.keymap.set({"n", "v"}, "<leader>y", [["+y]])
 -- Enter Ex 
 vim.keymap.set("n", "<leader>pv", ":Ex<cr>")
 
+-- Execute python files quickly
+vim.keymap.set('n', '<leader>r', ':!python3 %<CR>')
+

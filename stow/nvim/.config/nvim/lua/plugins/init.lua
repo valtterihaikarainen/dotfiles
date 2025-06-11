@@ -19,6 +19,8 @@ local telescope = require("plugins.telescope")
 local ui_plugins = require("plugins.ui")
 local lsp = require("plugins.lsp")
 local jupyter = require("plugins.jupyter")
+local jupytext = require("plugins.jupytext")
+local quarto = require("plugins.quarto")
 
 -- 3) Concatenate them all into one big list 
 local plugin_list = {}
@@ -34,6 +36,8 @@ extend(plugin_list, ui_plugins)
 extend(plugin_list, telescope)
 extend(plugin_list, lsp)
 extend(plugin_list, jupyter)
+extend(plugin_list, jupytext)
+extend(plugin_list, quarto)
 
 -- ... more
 

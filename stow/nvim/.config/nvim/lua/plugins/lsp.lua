@@ -48,6 +48,8 @@ return {
         lazy = false,
         config = true,
     },
+
+
     {
         'neovim/nvim-lspconfig',
         cmd = {'LspInfo', 'LspInstall', 'LspStart'},
@@ -73,20 +75,28 @@ return {
                 lsp_zero.default_setup,
                 lua_ls = function()
                     local lua_opts = lsp_zero.nvim_lua_ls()
-
-                    lua_opts.settings = {
-                        Lua = {
-                            diagnostics = {
-                                globals = { "vim" }, 
-                            }, 
-                            workspace = {
-                                checkThirdParty = false, 
-                                library = vim.api.nvim_get_runtime_file("", true), 
-                            }
-                        }
-                    }
-
-                    require('lspconfig').lua_ls.setup(lua_opts)
+                    -- Correctly configure lua_ls settings
+                    require('lspconfig').lua_ls.setup({
+                        settings = {
+                            Lua = {
+                                -- Tell the language server about globals like `vim`
+                                diagnostics = {
+                                    globals = {'vim'},
+                                },
+                                workspace = {
+                                    checkThirdParty = false,
+                                    -- Make the server aware of Neovim runtime files
+                                    library = vim.api.nvim_get_runtime_file("", true),
+                                },
+                                -- Do not warn about unused variables
+                                DUMMY_FIELD_TO_REMOVE_THE_COMMA = true, -- Remove this line, it's just to make the next line valid
+                                -- You can also add other settings here, like:
+                                --telemetry = {
+                                --    enable = false,
+                                --},
+                            },
+                        },
+                    })
                 end,
             }
         })

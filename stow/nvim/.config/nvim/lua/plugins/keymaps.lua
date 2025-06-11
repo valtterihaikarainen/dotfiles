@@ -21,4 +21,8 @@ vim.keymap.set("n", "<leader>x", ":bx<cr>")
 vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float)
 
 
+-- molten
+
+vim.g.molten_auto_open_output = false
+
 
