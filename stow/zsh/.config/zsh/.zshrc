@@ -13,13 +13,43 @@
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 
-# On macOS, prefer GNU core utilities (like ls, grep) installed via Homebrew.
-if command -v brew &> /dev/null; then
-    export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
-fi
-
 export EDITOR='vim'
 export KEYTIMEOUT=1
+
+# ---- Homebrew & coreutils for *all* interactive shells ----
+if [[ "$(uname)" == "Darwin" ]]; then
+  # 1) make sure Homebrew itself is on $PATH
+  if [[ -d /opt/homebrew/bin ]]; then
+    PATH="/opt/homebrew/bin:$PATH"      # Apple-Silicon Macs
+  elif [[ -d /usr/local/bin ]]; then
+    PATH="/usr/local/bin:$PATH"         # Intel Macs or Linuxbrew
+  fi
+
+  # 2) put GNU coreutils wrappers first, if they exist
+  if command -v brew &>/dev/null; then
+    coreutils_bin="$(brew --prefix coreutils 2>/dev/null)/libexec/gnubin"
+    [[ -d $coreutils_bin ]] && PATH="$coreutils_bin:$PATH"
+  fi
+
+  export PATH
+fi
+
+
+# -----------------------------------------------------------------------------
+# SECTION 1A: XDG BASE DIRECTORIES 
+#
+# Define standard locations per the XDG spec and configure directories 
+# -----------------------------------------------------------------------------
+
+export XDG_DATA_HOME="${HOME}/.local/share" # user-specific data files
+export XDG_CONFIG_HOME="${HOME}/.config" # user-specific configuration files
+export XDG_STATE_HOME="${HOME}/.local/state" # user-specific state data
+export XDG_CACHE_HOME="${HOME}/.cache" # user-specific non-essential data
+export XDG_RUNTIME_DIR="${XDG_STATE_HOME}/runtime" # user-specific runtime files and other file objects
+
+export WORKON_HOME="$XDG_DATA_HOME/virtualenvs"
+
+
 
 # -----------------------------------------------------------------------------
 # SECTION 2: HISTORY
@@ -173,7 +203,7 @@ venv() {
     if [ $# -eq 0 ]; then
         echo "Please provide venv name"
     else
-        source "$VENV_HOME/$1/bin/activate"
+# source "$VENV_HOME/$1/bin/activate"  # commented out by conda initialize
     fi
 }
 
@@ -193,9 +223,19 @@ rmvenv() { # Corrected function name from rmenv
     fi
 }
 
-
 # -----------------------------------------------------------------------------
 # SECTION 9
+#
+# Initialize pyenv in interactive login
+# # -----------------------------------------------------------------------------
+
+if command -v pyenv >/dev/null; then
+  eval "$(pyenv init --path)"   # sets PATH early (shell-recommended)
+  eval "$(pyenv init -)"        # adds completions & shell functions
+fi
+
+# -----------------------------------------------------------------------------
+# SECTION 10
 #
 # Load Zsh plugins.
 # IMPORTANT: This section should be the very last part of the file.
@@ -205,3 +245,19 @@ rmvenv() { # Corrected function name from rmenv
 if [ -f /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
   source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/Users/valtterihaikarainen/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/Users/valtterihaikarainen/miniconda3/etc/profile.d/conda.sh" ]; then
+        . "/Users/valtterihaikarainen/miniconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/Users/valtterihaikarainen/miniconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+

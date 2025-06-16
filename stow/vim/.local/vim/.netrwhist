@@ -1,0 +1,12 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhistcnt =1
+let g:netrw_dirhist_1='/Users/valtterihaikarainen/dotfiles/stow/zsh/.config/zsh'
+let g:netrw_dirhist_0='/Users/valtterihaikarainen/dotfiles/stow/zsh/.config'
+let g:netrw_dirhist_9='/Users/valtterihaikarainen/dotfiles/stow/zsh'
+let g:netrw_dirhist_8='/Users/valtterihaikarainen/dotfiles/stow/zsh/.config/zsh'
+let g:netrw_dirhist_7='/Users/valtterihaikarainen/dotfiles/stow/zsh/.config'
+let g:netrw_dirhist_6='/Users/valtterihaikarainen/dotfiles/stow/zsh'
+let g:netrw_dirhist_5='/Users/valtterihaikarainen/dotfiles/stow/zsh/.config/zsh'
+let g:netrw_dirhist_4='/Users/valtterihaikarainen/Documents/uni/su25/res'
+let g:netrw_dirhist_3='/Users/valtterihaikarainen/test'
+let g:netrw_dirhist_2='/Users/valtterihaikarainen/dl'
