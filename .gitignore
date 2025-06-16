@@ -10,5 +10,3 @@
 
 tmp/
 
-# bootstrap.sh script for installs across machines (wip)
-bootstrap.sh
